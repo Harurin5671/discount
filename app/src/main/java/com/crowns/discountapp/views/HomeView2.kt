@@ -11,11 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,11 +20,11 @@ import com.crowns.discountapp.components.MainButton
 import com.crowns.discountapp.components.MainTextField
 import com.crowns.discountapp.components.SpaceH
 import com.crowns.discountapp.components.TwoCards
-import com.crowns.discountapp.viewModels.CalculateViewModel1
+import com.crowns.discountapp.viewModels.CalculateViewModel2
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeView(viewModel: CalculateViewModel1) {
+fun HomeView2(viewModel: CalculateViewModel2) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -39,12 +34,12 @@ fun HomeView(viewModel: CalculateViewModel1) {
                 )
             )
         }) {
-        ContentHomeView(it, viewModel)
+        ContentHomeView2(it, viewModel)
     }
 }
 
 @Composable
-fun ContentHomeView(paddingValues: PaddingValues, viewModel: CalculateViewModel1) {
+fun ContentHomeView2(paddingValues: PaddingValues, viewModel: CalculateViewModel2) {
     Column(
         modifier = Modifier
             .padding(paddingValues)
@@ -53,40 +48,38 @@ fun ContentHomeView(paddingValues: PaddingValues, viewModel: CalculateViewModel1
 //        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var price by remember { mutableStateOf("") }
-        var discount by remember { mutableStateOf("") }
-        var priceDiscount by remember { mutableDoubleStateOf(0.0) }
-        var totalDiscount by remember { mutableDoubleStateOf(0.0) }
-        var showAlert by remember { mutableStateOf(false) }
 
         TwoCards(
-            title1 = "Total", number1 = totalDiscount, title2 = "Discount", number2 = priceDiscount
+            title1 = "Total",
+            number1 = viewModel.totalDiscount,
+            title2 = "Discount",
+            number2 = viewModel.priceDiscount,
         )
-        MainTextField(value = price, onValueChange = { price = it }, label = "Price")
+        MainTextField(
+            value = viewModel.price,
+            onValueChange = { viewModel.onValueChange(it, "price") },
+            label = "Price"
+        )
         SpaceH()
-        MainTextField(value = discount, onValueChange = { discount = it }, label = "Discount %")
+        MainTextField(
+            value = viewModel.discount,
+            onValueChange = { viewModel.onValueChange(it, "discount") },
+            label = "Discount %"
+        )
         SpaceH(10.dp)
         MainButton(text = "Get Discount") {
-        val result = viewModel.calculate(price, discount)
-            showAlert = result.second.second
-            if (!showAlert){
-                priceDiscount = result.first
-                totalDiscount = result.second.first
-            }
+            viewModel.calculate()
         }
         SpaceH()
         MainButton(text = "Clean", color = Color.Red) {
-            price = ""
-            discount = ""
-            priceDiscount = 0.0
-            totalDiscount = 0.0
+            viewModel.clean()
         }
-        if (showAlert) {
+        if (viewModel.showAlert) {
             Alert(
                 title = "Alert",
                 message = "Complete all fields",
                 confirmText = "Ok",
-                onConfirmClick = { showAlert = false }) {}
+                onConfirmClick = { viewModel.cancelAlert() }) {}
         }
     }
 }
