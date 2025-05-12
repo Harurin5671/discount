@@ -22,10 +22,10 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun HomePreview() {
-    DiscountAppTheme {
-        HomeView()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HomePreview() {
+//    DiscountAppTheme {
+//        HomeView()
+//    }
+//}
